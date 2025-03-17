@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Trip Planner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Same styles as before */
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url('https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            color: white;
+            padding: 100px 0;
+            margin-bottom: 40px;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .btn-primary {
+            background-color: #4a89dc;
+            border: none;
+            padding: 10px 20px;
+        }
+        .btn-primary:hover {
+            background-color: #3672c5;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero text-center">
+        <div class="container">
+            <h1 class="display-4">AI Trip Planner</h1>
+            <p class="lead">Plan your perfect trip with the help of AI</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Plan Your Trip</h2>
+                        <form id="tripForm">
+                            <div class="mb-3">
+                                <label for="destination" class="form-label">Destination</label>
+                                <input type="text" class="form-control" id="destination" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="duration" class="form-label">Duration (days)</label>
+                                <input type="number" class="form-control" id="duration" min="1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="transport" class="form-label">Mode of Transport</label>
+                                <select class="form-select" id="transport" required>
+                                    <option value="">Select transport</option>
+                                    <option value="car">Car</option>
+                                    <option value="public">Public Transport</option>
+                                    <option value="walking">Walking</option>
+                                    <option value="cycling">Cycling</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="budget" class="form-label">Budget</label>
+                                <select class="form-select" id="budget" required>
+                                    <option value="">Select budget</option>
+                                    <option value="low">Low</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="people" class="form-label">Number of People</label>
+                                <input type="number" class="form-control" id="people" min="1" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Generate Trip Plan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add debug output area -->
+    <div class="container mt-3" id="debugArea" style="display: none;">
+        <div class="card">
+            <div class="card-body">
+                <h4>Debug Output</h4>
+                <pre id="debugOutput" style="white-space: pre-wrap; max-height: 300px; overflow-y: auto;"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function debugLog(message, data) {
+            const debugArea = document.getElementById('debugArea');
+            const debugOutput = document.getElementById('debugOutput');
+            
+            debugArea.style.display = 'block';
+            
+            const timestamp = new Date().toLocaleTimeString();
+            let logMessage = `[${timestamp}] ${message}\n`;
+            
+            if (data) {
+                if (typeof data === 'object') {
+                    logMessage += JSON.stringify(data, null, 2) + '\n';
+                } else {
+                    logMessage += data + '\n';
+                }
+            }
+            
+            debugOutput.textContent += logMessage;
+        }
+
+        document.getElementById('tripForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const tripData = {
+                destination: document.getElementById('destination').value,
+                duration: document.getElementById('duration').value,
+                transport: document.getElementById('transport').value,
+                budget: document.getElementById('budget').value,
+                people: document.getElementById('people').value
+            };
+            
+            // Debug log
+            debugLog('Submitting trip data', tripData);
+            
+            // Store data in localStorage to be accessed in the results page
+            localStorage.setItem('tripData', JSON.stringify(tripData));
+            
+            // Show loading state
+            document.querySelector('button[type="submit"]').innerHTML = 'Generating Plan...';
+            document.querySelector('button[type="submit"]').disabled = true;
+            
+            // Send data to backend
+            fetch('/api/generate-trip', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(tripData),
+            })
+            .then(response => {
+                debugLog('Received response', `Status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                // Debug log
+                debugLog('Got trip plan data', data);
+                
+                // Store the generated itinerary
+                localStorage.setItem('tripPlan', JSON.stringify(data));
+                
+                // Navigate to results page
+                window.location.href = '/results.html';
+            })
+            .catch(error => {
+                debugLog('Error', error.toString());
+                console.error('Error:', error);
+                alert('An error occurred while generating your trip plan. Please try again.');
+                document.querySelector('button[type="submit"]').innerHTML = 'Generate Trip Plan';
+                document.querySelector('button[type="submit"]').disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Trip Plan | AI Trip Planner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Same styles as before */
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .header {
+            background-color: #4a89dc;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .day-card {
+            border-left: 5px solid #4a89dc;
+        }
+        .category-title {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .btn-download {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+        .btn-download:hover {
+            background-color: #218838;
+            color: white;
+        }
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+        .btn-back:hover {
+            background-color: #5a6268;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header text-center">
+        <div class="container">
+            <h1>Your Trip Plan</h1>
+            <p class="lead">AI-Generated Itinerary for <span id="destination-display"></span></p>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row mb-4">
+            <div class="col-md-12 d-flex justify-content-between">
+                <button class="btn btn-back" onclick="window.location.href='index.html'">
+                    <i class="bi bi-arrow-left"></i> Back to Planner
+                </button>
+                <button class="btn btn-download" id="downloadBtn">
+                    <i class="bi bi-download"></i> Download as DOCX
+                </button>
+            </div>
+        </div>
+        
+        <!-- Debug output area -->
+        <div class="row mb-4" id="debugRow">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Debug Information</h4>
+                        <button class="btn btn-sm btn-info mb-2" onclick="toggleDebugDetails()">Toggle Debug Details</button>
+                        <div id="debugDetails" style="display: none;">
+                            <h5>Trip Data from localStorage:</h5>
+                            <pre id="tripDataDebug" style="white-space: pre-wrap; max-height: 200px; overflow-y: auto;"></pre>
+                            <h5>Trip Plan from localStorage:</h5>
+                            <pre id="tripPlanDebug" style="white-space: pre-wrap; max-height: 200px; overflow-y: auto;"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h3>Trip Summary</h3>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p><strong>Destination:</strong> <span id="trip-destination"></span></p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Duration:</strong> <span id="trip-duration"></span> days</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Transport:</strong> <span id="trip-transport"></span></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p><strong>Budget:</strong> <span id="trip-budget"></span></p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>People:</strong> <span id="trip-people"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <h3>Daily Itinerary</h3>
+                <div id="itinerary-container">
+                    <!-- Itinerary will be populated here -->
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h4>Accommodation Options</h4>
+                        <div class="category-title">
+                            <h5>Budget</h5>
+                        </div>
+                        <ul id="cheap-hotels" class="list-group list-group-flush mb-3">
+                            <!-- Budget hotels will be populated here -->
+                        </ul>
+                        
+                        <div class="category-title">
+                            <h5>Mid-range</h5>
+                        </div>
+                        <ul id="affordable-hotels" class="list-group list-group-flush mb-3">
+                            <!-- Mid-range hotels will be populated here -->
+                        </ul>
+                        
+                        <div class="category-title">
+                            <h5>Luxury</h5>
+                        </div>
+                        <ul id="expensive-hotels" class="list-group list-group-flush">
+                            <!-- Luxury hotels will be populated here -->
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Local Food to Try</h4>
+                        <ul id="local-food" class="list-group list-group-flush">
+                            <!-- Local food will be populated here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.0.0/docx.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script>
+        function toggleDebugDetails() {
+            const details = document.getElementById('debugDetails');
+            details.style.display = details.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Retrieve data from localStorage
+            const tripData = JSON.parse(localStorage.getItem('tripData'));
+            const tripPlan = JSON.parse(localStorage.getItem('tripPlan'));
+            
+            // Fill debug information
+            document.getElementById('tripDataDebug').textContent = JSON.stringify(tripData, null, 2);
+            document.getElementById('tripPlanDebug').textContent = JSON.stringify(tripPlan, null, 2);
+            
+            console.log('Trip Data:', tripData);
+            console.log('Trip Plan:', tripPlan);
+            
+            if (!tripData || !tripPlan) {
+                alert('No trip data found. Please create a new trip plan.');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            try {
+                // Populate trip summary
+                document.getElementById('destination-display').textContent = tripData.destination;
+                document.getElementById('trip-destination').textContent = tripData.destination;
+                document.getElementById('trip-duration').textContent = tripData.duration;
+                document.getElementById('trip-transport').textContent = tripData.transport;
+                document.getElementById('trip-budget').textContent = tripData.budget;
+                document.getElementById('trip-people').textContent = tripData.people;
+                
+                // Populate itinerary
+                const itineraryContainer = document.getElementById('itinerary-container');
+                
+                tripPlan.schedule.forEach((day, index) => {
+                    const dayCard = document.createElement('div');
+                    dayCard.className = 'card day-card mb-3';
+                    
+                    dayCard.innerHTML = `
+                        <div class="card-body">
+                            <h4>Day ${index + 1}</h4>
+                            <p>${day.description}</p>
+                            <h5>Activities:</h5>
+                            <ul>
+                                ${day.activities.map(activity => `<li>${activity}</li>`).join('')}
+                            </ul>
+                            <h5>Restaurants:</h5>
+                            <ul>
+                                ${day.restaurants.map(restaurant => `<li>${restaurant}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                    
+                    itineraryContainer.appendChild(dayCard);
+                });
+                
+                // Populate hotels
+                const cheapHotels = document.getElementById('cheap-hotels');
+                tripPlan.hotels.cheap.forEach(hotel => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = hotel;
+                    cheapHotels.appendChild(li);
+                });
+                
+                const affordableHotels = document.getElementById('affordable-hotels');
+                tripPlan.hotels.affordable.forEach(hotel => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = hotel;
+                    affordableHotels.appendChild(li);
+                });
+                
+                const expensiveHotels = document.getElementById('expensive-hotels');
+                tripPlan.hotels.expensive.forEach(hotel => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = hotel;
+                    expensiveHotels.appendChild(li);
+                });
+                
+                // Populate local food
+                const localFood = document.getElementById('local-food');
+                tripPlan.localFood.forEach(food => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = food;
+                    localFood.appendChild(li);
+                });
+                
+                // Download as DOCX functionality
+                document.getElementById('downloadBtn').addEventListener('click', function() {
+                    generateDocx(tripData, tripPlan);
+                });
+            } catch (error) {
+                console.error('Error populating trip plan:', error);
+                alert('Error displaying trip plan: ' + error.message);
+            }
+        });
+        
+        function generateDocx(tripData, tripPlan) {
+            // Create a new document
+            const doc = new docx.Document({
+                sections: [{
+                    properties: {},
+                    children: [
+                        new docx.Paragraph({
+                            text: `Trip Plan: ${tripData.destination}`,
+                            heading: docx.HeadingLevel.HEADING_1,
+                            spacing: { after: 200 }
+                        }),
+                        
+                        new docx.Paragraph({
+                            text: "Trip Summary",
+                            heading: docx.HeadingLevel.HEADING_2,
+                            spacing: { after: 200 }
+                        }),
+                        
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({ text: "Destination: ", bold: true }),
+                                new docx.TextRun({ text: tripData.destination })
+                            ]
+                        }),
+                        
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({ text: "Duration: ", bold: true }),
+                                new docx.TextRun({ text: `${tripData.duration} days` })
+                            ]
+                        }),
+                        
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({ text: "Transport: ", bold: true }),
+                                new docx.TextRun({ text: tripData.transport })
+                            ]
+                        }),
+                        
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({ text: "Budget: ", bold: true }),
+                                new docx.TextRun({ text: tripData.budget })
+                            ]
+                        }),
+                        
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({ text: "People: ", bold: true }),
+                                new docx.TextRun({ text: tripData.people })
+                            ],
+                            spacing: { after: 200 }
+                        }),
+                        
+                        new docx.Paragraph({
+                            text: "Daily Itinerary",
+                            heading: docx.HeadingLevel.HEADING_2,
+                            spacing: { before: 200, after: 200 }
+                        }),
+                        
+                        // Add daily itinerary
+                        ...getItineraryParagraphs(tripPlan.schedule),
+                        
+                        new docx.Paragraph({
+                            text: "Accommodation Options",
+                            heading: docx.HeadingLevel.HEADING_2,
+                            spacing: { before: 200, after: 200 }
+                        }),
+                        
+                        new docx.Paragraph({
+                            text: "Budget Options:",
+                            heading: docx.HeadingLevel.HEADING_3,
+                            spacing: { after: 100 }
+                        }),
+                        
+                        ...getListParagraphs(tripPlan.hotels.cheap),
+                        
+                        new docx.Paragraph({
+                            text: "Mid-range Options:",
+                            heading: docx.HeadingLevel.HEADING_3,
+                            spacing: { before: 100, after: 100 }
+                        }),
+                        
+                        ...getListParagraphs(tripPlan.hotels.affordable),
+                        
+                        new docx.Paragraph({
+                            text: "Luxury Options:",
+                            heading: docx.HeadingLevel.HEADING_3,
+                            spacing: { before: 100, after: 100 }
+                        }),
+                        
+                        ...getListParagraphs(tripPlan.hotels.expensive),
+                        
+                        new docx.Paragraph({
+                            text: "Local Food to Try",
+                            heading: docx.HeadingLevel.HEADING_2,
+                            spacing: { before: 200, after: 200 }
+                        }),
+                        
+                        ...getListParagraphs(tripPlan.localFood),
+                    ]
+                }]
+            });
+            
+            // Generate and download the document
+            docx.Packer.toBlob(doc).then(blob => {
+                saveAs(blob, `${tripData.destination} Trip Plan.docx`);
+            });
+        }
+        
+        function getItineraryParagraphs(schedule) {
+            const paragraphs = [];
+            
+            schedule.forEach((day, index) => {
+                paragraphs.push(
+                    new docx.Paragraph({
+                        text: `Day ${index + 1}`,
+                        heading: docx.HeadingLevel.HEADING_3,
+                        spacing: { before: 200, after: 100 }
+                    }),
+                    
+                    new docx.Paragraph({
+                        text: day.description,
+                        spacing: { after: 100 }
+                    }),
+                    
+                    new docx.Paragraph({
+                        text: "Activities:",
+                        bold: true,
+                        spacing: { after: 100 }
+                    }),
+                );
+                
+                // Add activities as bullet points
+                day.activities.forEach(activity => {
+                    paragraphs.push(
+                        new docx.Paragraph({
+                            text: activity,
+                            bullet: {
+                                level: 0
+                            }
+                        })
+                    );
+                });
+                
+                paragraphs.push(
+                    new docx.Paragraph({
+                        text: "Restaurants:",
+                        bold: true,
+                        spacing: { before: 100, after: 100 }
+                    }),
+                );
+                
+                // Add restaurants as bullet points
+                day.restaurants.forEach(restaurant => {
+                    paragraphs.push(
+                        new docx.Paragraph({
+                            text: restaurant,
+                            bullet: {
+                                level: 0
+                            }
+                        })
+                    );
+                });
+            });
+            
+            return paragraphs;
+        }
+        
+        function getListParagraphs(items) {
+            return items.map(item => 
+                new docx.Paragraph({
+                    text: item,
+                    bullet: {
+                        level: 0
+                    }
+                })
+            );
+        }
+    </script>
+</body>
+</html>
