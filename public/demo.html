@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madurai Location on Google Maps</title>
+    <style>
+        #map {
+            width: 100%;
+            height: 400px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Madurai Location</h2>
+    <div id="map"></div>
+
+    <script>
+        function initMap() {
+            var madurai = { lat: 9.9252, lng: 78.1198 }; // Madurai coordinates
+            var map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: madurai
+            });
+
+            var marker = new google.maps.Marker({
+                position: madurai,
+                map: map,
+                title: "Madurai, India"
+            });
+        }
+    </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKi4uthP2PXNkv3U1TroiO3_RuhnGC9RA&callback=initMap" async defer></script>
+
+</body>
+</html>

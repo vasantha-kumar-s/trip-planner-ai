@@ -35,11 +35,13 @@ function extractJsonFromText(text) {
 // API endpoint to generate trip plan
 app.post('/api/generate-trip', async (req, res) => {
     try {
-        const { destination, duration, transport, budget, people } = req.body;
+        const { destination, language, duration, transport, hotelBudget, foodBudget, people } = req.body;
         
-        // Create prompt for Gemini API
+        // Create prompt for Gemini API with separate hotel and food budgets
         const prompt = `Create a detailed trip plan for ${destination} for ${duration} days. 
-        The plan is for ${people} people with a ${budget} budget, using ${transport} as the primary mode of transportation.
+        The plan should use ${transport} as the primary mode of transportation for ${people}.
+        The daily hotel budget is ${hotelBudget} per night and the food budget is ${foodBudget} per meal.
+        Please provide the response in ${language} language.
         
         IMPORTANT: I need the response ONLY as a raw JSON object with no markdown formatting, code blocks, or explanations.
         
@@ -49,21 +51,28 @@ app.post('/api/generate-trip', async (req, res) => {
             {
               "description": "Brief overview of the day",
               "activities": ["Activity 1", "Activity 2", "Activity 3"],
-              "restaurants": ["Restaurant 1", "Restaurant 2"]
+              "restaurants": ["Restaurant 1 (approximate price range)", "Restaurant 2 (approximate price range)"]
             }
           ],
           "hotels": {
-            "cheap": ["Budget Hotel 1", "Budget Hotel 2", "Budget Hotel 3"],
-            "affordable": ["Mid-range Hotel 1", "Mid-range Hotel 2", "Mid-range Hotel 3"],
-            "expensive": ["Luxury Hotel 1", "Luxury Hotel 2", "Luxury Hotel 3"]
+            "cheap": ["Budget Hotel 1 (price per night)", "Budget Hotel 2 (price per night)", "Budget Hotel 3 (price per night)"],
+            "affordable": ["Mid-range Hotel 1 (price per night)", "Mid-range Hotel 2 (price per night)", "Mid-range Hotel 3 (price per night)"],
+            "expensive": ["Luxury Hotel 1 (price per night)", "Luxury Hotel 2 (price per night)", "Luxury Hotel 3 (price per night)"]
           },
-          "localFood": ["Local dish 1", "Local dish 2", "Local dish 3", "Local dish 4", "Local dish 5"]
+          "localFood": ["Local dish 1 (approximate price)", "Local dish 2 (approximate price)", "Local dish 3 (approximate price)", "Local dish 4 (approximate price)", "Local dish 5 (approximate price)"],
+          "budgetAnalysis": {
+            "hotelOptions": "Brief analysis of hotel options that match the ${hotelBudget} per night budget",
+            "foodOptions": "Brief analysis of food options that match the ${foodBudget} per meal budget",
+            "recommendedOptions": "Specific recommendations within budget"
+          }
         }
         
         The schedule array should have exactly ${duration} days.
-        For each day, provide 3-5 activities and 2-3 restaurant recommendations.
-        For hotels, provide exactly 3 options for each price category.
-        For local food, provide 5 must-try local dishes or specialties.
+        For each day, provide 3-5 activities and 2-3 restaurant recommendations with approximate price ranges.
+        For hotels, provide exactly 3 options for each price category with approximate prices per night.
+        Analyze if the ${hotelBudget} per night budget is low, medium, or high for this destination and recommend appropriate options.
+        Analyze if the ${foodBudget} per meal budget is low, medium, or high for this destination and recommend appropriate options.
+        For local food, provide 5 must-try local dishes or specialties with approximate prices.
         
         Return ONLY the raw JSON with no extra text or formatting.`;
 
@@ -96,12 +105,29 @@ app.post('/api/generate-trip', async (req, res) => {
     }
 });
 
-// Handle all other routes by serving the index.html
-app.get('*', (req, res) => {
+// Serve main.html as the default page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'main.html'));
+});
+
+// Add explicit route for index.html
+app.get('/index.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Handle all other routes by serving the appropriate HTML file
+app.get('*', (req, res) => {
+    // Check if the requested file exists in the public directory
+    const filePath = path.join(__dirname, 'public', req.path);
+    res.sendFile(filePath, (err) => {
+        if (err) {
+            // If file not found, serve main.html
+            res.sendFile(path.join(__dirname, 'public', 'main.html'));
+        }
+    });
 });
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}/main.html`);
 });

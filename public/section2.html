@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chennai Travel & Food Guide</title>
+    
+    <!-- Remix Icon CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        .carousel-item img {
+            width: 100%;
+            height: 400px; /* Ensures consistent image size */
+            object-fit: cover; /* Maintains proper scaling */
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Carousel for Chennai's Top Places -->
+        <div id="chennaiPlacesCarousel" class="carousel slide shadow-lg" data-bs-ride="carousel" data-bs-interval="2500">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Chennai_-_bird%27s-eye_view.jpg/1024px-Chennai_-_bird%27s-eye_view.jpg" alt="Marina Beach">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Kapaleeswarar_Temple%2C_Mylapore%2C_Chennai.jpg/800px-Kapaleeswarar_Temple%2C_Mylapore%2C_Chennai.jpg" alt="Kapaleeshwarar Temple">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Ripon_Building_Chennai.JPG/1024px-Ripon_Building_Chennai.JPG" alt="Fort St. George">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#chennaiPlacesCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#chennaiPlacesCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            </button>
+        </div>
+
+        <!-- Travel Itinerary -->
+        <h2 class="mt-5">2-Day Chennai Travel Itinerary</h2>
+        <ul>
+            <li><strong>Day 1:</strong> Visit Marina Beach, explore Fort St. George, and enjoy authentic South Indian breakfast at Saravana Bhavan.</li>
+            <li><strong>Day 2:</strong> Explore Kapaleeshwarar Temple, visit Valluvar Kottam, and shop at T Nagar.</li>
+        </ul>
+
+        <!-- Food Section -->
+        <h2 class="mt-4">Famous Chennai Food</h2>
+        <p>Experience delicious South Indian cuisine such as **Idli, Dosa, Filter Coffee, and Chettinad Chicken** at places like Murugan Idli Shop and Dindigul Thalappakatti.</p>
+
+        <!-- Google Map -->
+        <h2 class="mt-4">Explore Chennai</h2>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31095.23364813345!2d80.2707184!3d13.0826802!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5267d5cd8d3d2b%3A0x8f415fc3a69b63f5!2sChennai%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1710775119316!5m2!1sen!2sin" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

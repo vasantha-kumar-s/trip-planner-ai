@@ -1,107 +1,530 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Trip Planner</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
-        /* Same styles as before */
+        :root {
+            --bg-color: #f5f5f5;
+            --text-color: #212529;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --feature-card-bg: rgba(255, 255, 255, 0.7);
+            --card-border: rgba(255, 255, 255, 0.2);
+            --form-bg: rgba(255, 255, 255, 0.9);
+            --form-border: rgba(0, 0, 0, 0.1);
+            --icon-bg: rgba(74, 137, 220, 0.1);
+            --divider-color: rgba(0, 0, 0, 0.1);
+            --main-content-bg: rgba(245, 245, 245, 0.9);
+            --form-text-color: #212529;
+            --card-title-color: #212529;
+            --label-color: #212529;
+            --input-text-color: #212529;
+            --input-group-text-color: #212529;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --card-bg: rgba(30, 30, 30, 0.8);
+            --feature-card-bg: rgba(30, 30, 30, 0.7);
+            --card-border: rgba(50, 50, 50, 0.2);
+            --form-bg: rgba(30, 30, 30, 0.9);
+            --form-border: rgba(60, 60, 60, 0.3);
+            --icon-bg: rgba(74, 137, 220, 0.2);
+            --divider-color: rgba(255, 255, 255, 0.1);
+            --main-content-bg: rgba(20, 20, 20, 0.9);
+            --form-text-color: #e0e0e0;
+            --card-title-color: #e0e0e0;
+            --label-color: #e0e0e0;
+            --input-text-color: #e0e0e0;
+            --input-group-text-color: #e0e0e0;
+        }
+
         body {
-            background-color: #f5f5f5;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1528723872920-bdc5f0dac7fc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
                         url('https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
             background-size: cover;
+            background-position: center;
             color: white;
-            padding: 100px 0;
-            margin-bottom: 40px;
+            min-height: 100vh; /* Full screen height */
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 0; /* Remove bottom margin */
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 120px 0;
+        }
+        .main-content {
+            position: relative;
+            padding-top: 50px;
+            background-color: var(--main-content-bg);
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+            margin-top: -30px;
+            box-shadow: 0px -15px 25px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        .scroll-down-btn {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .scroll-down-btn:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: translateX(-50%) translateY(-5px);
+        }
+        .back-to-home {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .back-to-home:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+            transform: translateY(-2px);
         }
         .card {
             border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
+            background-color: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        .card-title {
+            color: var(--card-title-color);
+            transition: color 0.3s ease;
         }
         .btn-primary {
             background-color: #4a89dc;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(74, 137, 220, 0.3);
         }
         .btn-primary:hover {
             background-color: #3672c5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(74, 137, 220, 0.4);
+        }
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid var(--form-border);
+            background-color: var(--form-bg);
+            color: var(--input-text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(74, 137, 220, 0.25);
+            border-color: #4a89dc;
+        }
+        .form-label {
+            color: var(--label-color);
+            transition: color 0.3s ease;
+        }
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #4a89dc;
+            background: var(--icon-bg);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+        .features {
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+        .feature-card {
+            padding: 20px;
+            text-align: center;
+            border-radius: 15px;
+            background-color: var(--feature-card-bg);
+            backdrop-filter: blur(10px);
+            height: 100%;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .animated-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            opacity: 0.1;
+        }
+        .animated-icon {
+            position: absolute;
+            font-size: 2rem;
+            color: white;
+            opacity: 0.4;
+            animation: float-icons 15s linear infinite;
+        }
+        @keyframes float-icons {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-1000px) rotate(360deg); opacity: 0; }
+        }
+        .budget-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--label-color);
+            transition: color 0.3s ease;
+        }
+        .budget-divider {
+            margin: 15px 0;
+            border-top: 1px dashed var(--divider-color);
+            transition: border-color 0.3s ease;
+        }
+        .budget-info-icon {
+            cursor: pointer;
+            color: #4a89dc;
+            margin-left: 5px;
+            transition: all 0.3s ease;
+        }
+        .budget-info-icon:hover {
+            color: #3672c5;
+            transform: scale(1.1);
+        }
+        .input-group-text {
+            background-color: var(--form-bg);
+            border-color: var(--form-border);
+            color: var(--input-group-text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        /* Dark mode toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .dark-mode-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .dark-mode-toggle i {
+            color: white;
+            font-size: 1.5rem;
+            transition: transform 0.5s ease;
+        }
+        .dark-mode-toggle:hover i {
+            transform: rotate(30deg);
+        }
+        /* Debug output dark mode */
+        #debugOutput {
+            background-color: var(--form-bg);
+            color: var(--text-color);
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        /* Fix for placeholder text color in dark mode */
+        [data-theme="dark"] .form-control::placeholder {
+            color: #aaa;
+        }
+        /* Fix for select option text color in dark mode */
+        [data-theme="dark"] .form-select option {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        /* Additional styles for budget section headings */
+        h4 {
+            color: var(--text-color);
+            transition: color 0.3s ease;
         }
     </style>
 </head>
 <body>
-    <div class="hero text-center">
-        <div class="container">
-            <h1 class="display-4">AI Trip Planner</h1>
-            <p class="lead">Plan your perfect trip with the help of AI</p>
+    <!-- Back to home button (now fixed position) -->
+    <button class="btn btn-dark back-to-home" onclick="window.location.href='main.html'">
+        <i class="fas fa-arrow-left me-2"></i>Back to Home
+    </button>
+
+    <!-- Dark mode toggle button -->
+    <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle Dark Mode">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="hero">
+        <div class="animated-bg">
+            <i class="animated-icon fas fa-plane" style="left: 10%; top: 20%; animation-duration: 20s;"></i>
+            <i class="animated-icon fas fa-map-marker-alt" style="left: 20%; top: 50%; animation-duration: 15s;"></i>
+            <i class="animated-icon fas fa-compass" style="left: 30%; top: 30%; animation-duration: 18s;"></i>
+            <i class="animated-icon fas fa-suitcase" style="left: 50%; top: 10%; animation-duration: 12s;"></i>
+            <i class="animated-icon fas fa-camera" style="left: 70%; top: 40%; animation-duration: 22s;"></i>
+            <i class="animated-icon fas fa-mountain" style="left: 80%; top: 15%; animation-duration: 16s;"></i>
+            <i class="animated-icon fas fa-route" style="left: 90%; top: 60%; animation-duration: 14s;"></i>
         </div>
+        <div class="container hero-content text-center">
+            <img src="https://api.dicebear.com/6.x/shapes/svg?seed=travel" alt="AI Trip Planner Logo" class="logo">
+            <h1 class="display-3 animate__animated animate__fadeInDown">Trippie</h1>
+            <p class="lead animate__animated animate__fadeInUp">Plan your perfect trip with the help of AI</p>
+        </div>
+        
+        <!-- New scroll down button -->
+        <button class="scroll-down-btn animate__animated animate__fadeIn" id="scrollDownBtn">
+            <i class="fas fa-angle-double-down me-2"></i>Explore
+        </button>
     </div>
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="card-title text-center mb-4">Plan Your Trip</h2>
-                        <form id="tripForm">
-                            <div class="mb-3">
-                                <label for="destination" class="form-label">Destination</label>
-                                <input type="text" class="form-control" id="destination" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="duration" class="form-label">Duration (days)</label>
-                                <input type="number" class="form-control" id="duration" min="1" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="transport" class="form-label">Mode of Transport</label>
-                                <select class="form-select" id="transport" required>
-                                    <option value="">Select transport</option>
-                                    <option value="car">Car</option>
-                                    <option value="public">Public Transport</option>
-                                    <option value="walking">Walking</option>
-                                    <option value="cycling">Cycling</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="budget" class="form-label">Budget</label>
-                                <select class="form-select" id="budget" required>
-                                    <option value="">Select budget</option>
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="people" class="form-label">Number of People</label>
-                                <input type="number" class="form-control" id="people" min="1" required>
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-lg">Generate Trip Plan</button>
-                            </div>
-                        </form>
+    <div class="main-content">
+        <div class="container">
+            <div class="row features">
+                <div class="col-md-4 mb-4 animate__animated animate__fadeInLeft">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3>Instant Itineraries</h3>
+                        <p>Get personalized trip plans in seconds with AI-powered suggestions</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4 animate__animated animate__fadeInUp">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h3>Custom Destinations</h3>
+                        <p>Explore any location with tailored recommendations for your preferences</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4 animate__animated animate__fadeInRight">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h3>Local Experiences</h3>
+                        <p>Discover hidden gems, local cuisine, and authentic activities</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-md-8 animate__animated animate__fadeInUp">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title text-center mb-4">Plan Your Trip</h2>
+                            <form id="tripForm">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="destination" class="form-label">
+                                            <i class="fas fa-map-marker-alt me-2"></i>Destination
+                                        </label>
+                                        <input type="text" class="form-control" id="destination" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="language" class="form-label">
+                                            <i class="fas fa-language me-2"></i>Language
+                                        </label>
+                                        <input type="text" class="form-control" id="language" placeholder="English" value="English">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="duration" class="form-label">
+                                            <i class="fas fa-calendar-alt me-2"></i>Duration (days)
+                                        </label>
+                                        <input type="number" class="form-control" id="duration" min="1" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="transport" class="form-label">
+                                            <i class="fas fa-car me-2"></i>Mode of Transport
+                                        </label>
+                                        <select class="form-select" id="transport" required>
+                                            <option value="">Select transport</option>
+                                            <option value="private">Private Transport</option>
+                                            <option value="public">Public Transport</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="people" class="form-label">
+                                            <i class="fas fa-users me-2"></i>Number of People
+                                        </label>
+                                        <input type="number" class="form-control" id="people" min="1" value="1" required>
+                                    </div>
+                                </div>
+                                
+                                <!-- Budget section with divider -->
+                                <div class="budget-divider"></div>
+                                <h4 class="mb-3"><i class="fas fa-wallet me-2"></i>Budget Details</h4>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="hotelBudget" class="form-label budget-label">
+                                            <i class="fas fa-hotel me-2"></i>Hotel Budget
+                                            <i class="fas fa-info-circle budget-info-icon" data-bs-toggle="tooltip" title="Enter your budget per night for accommodation"></i>
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">₹</span>
+                                            <input type="number" class="form-control" id="hotelBudget" min="0" placeholder="Per night" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="foodBudget" class="form-label budget-label">
+                                            <i class="fas fa-utensils me-2"></i>Food Budget
+                                            <i class="fas fa-info-circle budget-info-icon" data-bs-toggle="tooltip" title="Enter your budget per meal per person"></i>
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">₹</span>
+                                            <input type="number" class="form-control" id="foodBudget" min="0" placeholder="Per meal/person" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-magic me-2"></i>Generate Trip Plan
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Add debug output area -->
-    <div class="container mt-3" id="debugArea" style="display: none;">
-        <div class="card">
-            <div class="card-body">
-                <h4>Debug Output</h4>
-                <pre id="debugOutput" style="white-space: pre-wrap; max-height: 300px; overflow-y: auto;"></pre>
+        <!-- Add debug output area -->
+        <div class="container mt-3" id="debugArea" style="display: none;">
+            <div class="card">
+                <div class="card-body">
+                    <h4>Debug Output</h4>
+                    <pre id="debugOutput" style="white-space: pre-wrap; max-height: 300px; overflow-y: auto;"></pre>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Dark mode toggle functionality
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const htmlElement = document.documentElement;
+        
+        // Check for saved theme preference or prefer-color-scheme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            htmlElement.setAttribute('data-theme', savedTheme);
+            updateDarkModeIcon(savedTheme);
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            htmlElement.setAttribute('data-theme', 'dark');
+            updateDarkModeIcon('dark');
+        }
+        
+        // Update icon based on theme
+        function updateDarkModeIcon(theme) {
+            if (theme === 'dark') {
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        }
+        
+        // Toggle dark mode
+        darkModeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateDarkModeIcon(newTheme);
+            
+            // Add animation to the toggle button
+            darkModeToggle.classList.add('animate__animated', 'animate__rubberBand');
+            setTimeout(() => {
+                darkModeToggle.classList.remove('animate__animated', 'animate__rubberBand');
+            }, 1000);
+        });
+
         function debugLog(message, data) {
             const debugArea = document.getElementById('debugArea');
             const debugOutput = document.getElementById('debugOutput');
@@ -122,15 +545,41 @@
             debugOutput.textContent += logMessage;
         }
 
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+
+        // Updated smooth scrolling for new scroll button
+        document.getElementById('scrollDownBtn').addEventListener('click', function() {
+            document.querySelector('.main-content').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Add animation to form elements
+        const formInputs = document.querySelectorAll('.form-control, .form-select');
+        formInputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('animate__animated', 'animate__pulse');
+                setTimeout(() => {
+                    this.parentElement.classList.remove('animate__animated', 'animate__pulse');
+                }, 1000);
+            });
+        });
+
         document.getElementById('tripForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const tripData = {
                 destination: document.getElementById('destination').value,
+                language: document.getElementById('language').value || 'English',
                 duration: document.getElementById('duration').value,
                 transport: document.getElementById('transport').value,
-                budget: document.getElementById('budget').value,
-                people: document.getElementById('people').value
+                hotelBudget: document.getElementById('hotelBudget').value,
+                foodBudget: document.getElementById('foodBudget').value,
+                people: document.getElementById('people').value || '1'
             };
             
             // Debug log
@@ -140,8 +589,9 @@
             localStorage.setItem('tripData', JSON.stringify(tripData));
             
             // Show loading state
-            document.querySelector('button[type="submit"]').innerHTML = 'Generating Plan...';
-            document.querySelector('button[type="submit"]').disabled = true;
+            const submitButton = document.querySelector('button[type="submit"]');
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating Plan...';
+            submitButton.disabled = true;
             
             // Send data to backend
             fetch('/api/generate-trip', {
@@ -162,17 +612,39 @@
                 // Store the generated itinerary
                 localStorage.setItem('tripPlan', JSON.stringify(data));
                 
-                // Navigate to results page
-                window.location.href = '/results.html';
+                // Navigate to results page with animation
+                document.body.classList.add('animate__animated', 'animate__fadeOut');
+                setTimeout(() => {
+                    window.location.href = '/results.html';
+                }, 500);
             })
             .catch(error => {
                 debugLog('Error', error.toString());
                 console.error('Error:', error);
                 alert('An error occurred while generating your trip plan. Please try again.');
-                document.querySelector('button[type="submit"]').innerHTML = 'Generate Trip Plan';
-                document.querySelector('button[type="submit"]').disabled = false;
+                submitButton.innerHTML = '<i class="fas fa-magic me-2"></i>Generate Trip Plan';
+                submitButton.disabled = false;
             });
         });
+
+        // Generate random floating icons
+        function createFloatingIcons() {
+            const icons = ['fa-plane', 'fa-map-marker-alt', 'fa-compass', 'fa-suitcase', 'fa-camera', 'fa-mountain', 'fa-route'];
+            const container = document.querySelector('.animated-bg');
+            
+            for (let i = 0; i < 30; i++) {  // Increased number of icons
+                const icon = document.createElement('i');
+                const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+                icon.className = `animated-icon fas ${randomIcon}`;
+                icon.style.left = `${Math.random() * 100}%`;
+                icon.style.top = `${Math.random() * 100}%`;
+                icon.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                icon.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(icon);
+            }
+        }
+        
+        createFloatingIcons();
     </script>
 </body>
 </html>

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelMate - Your Travel Companion</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        :root {
+            --primary: #3b82f6;
+            --secondary: #6366f1;
+            --accent: #8b5cf6;
+            --text: #333333;
+            --background: #f3f4f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            color: white;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background-image: url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            color: white;
+            text-align: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-content {
+            position: relative;
+            max-width: 800px;
+            padding: 0 2rem;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 2rem;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 4rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+        }
+
+        .section-title.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            border-radius: 1rem;
+            background: var(--background);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* Stats Section */
+        .stats {
+            background: var(--primary);
+            color: white;
+            padding: 4rem 2rem;
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 6rem 2rem;
+            background: var(--background);
+        }
+
+        .testimonial-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .testimonial-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 1rem;
+        }
+
+        .testimonial-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .testimonial-role {
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .rating {
+            color: #fbbf24;
+            margin-top: 1rem;
+        }
+
+        /* Login Form */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(-45deg, var(--primary), var(--secondary), var(--accent));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            padding: 1rem;
+        }
+
+        .login-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-brand">✈ TravelMate</div>
+        <div class="nav-links">
+            <a href="#features" class="nav-link"></a>
+            <a href="#PopularPlaces" class="nav-link"></a>
+            <a href="#testimonials" class="nav-link"></a>
+            <a href="#ContactUs" class="nav-link" ></a>
+            <a href="#" class="nav-link" onclick="showLogin()"></a>
+        </div>
+    </nav>
+
+    <div id="home-page">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Your Journey Begins Here</h1>
+                <p>Plan, Write, and Share Your Travel Adventures</p>
+                <div style="display: flex; justify-content: center; gap: 20px; width: 100%;">
+                    <button class="btn" onclick="redirectToPlanner()" style="width: auto; min-width: 150px;">Trip Planner</button>
+                    <button class="btn" onclick="redirectToBlogger()" style="width: auto; min-width: 150px;">Blog Generator</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="PopularPlaces" class="PopularPlaces">  
+        <div>
+            <p class="section-title">Popular Places</p>
+        </div>
+       
+            <div style="max-width: 800px; margin: 20px auto; padding: 20px; background-color: #fff; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border-radius: 5px;">
+                <h1 style="text-align: center; color: #333;"></h1>
+                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #ddd; padding: 10px 0;">
+                    <img src="https://th.bing.com/th/id/OSK.HEROENm1gFWkuFckB_jNBCZ-grJCgRlBl3qmfUMMZ5A4CM8?w=472&h=280&c=1&rs=2&o=6&pid=SANGAM" alt="Burger" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;">
+                    <div style="flex-grow: 1; margin-left: 15px;">
+                        <h2>Hyderabad</h2>
+                        <p style="font-weight: bold; color: #3e4eca;">A vibrant city known for its rich history, </br>tech industry, and delicious Hyderabadi biryan</p>
+                    </div>
+                    <button style="background-color: #28a745; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 5px;" onclick="window.location.href='section.html'">View</button>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #ddd; padding: 10px 0;">
+                    <img src="https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2hlbm5haXxlbnwwfHwwfHx8MA%3D%3D" alt="Pizza" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;">
+                    <div style="flex-grow: 1; margin-left: 15px;">
+                        <h2>Chennai</h2>
+                        <p style="font-weight: bold; color: #3e4eca;">A coastal metropolis famous for its cultural heritage,
+                        </br> Marina Beach, and thriving automobile industry</p>
+                    </div>
+                    <button style="background-color: #28a745; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 5px;" onclick="window.location.href='section2.html'">View</button>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0;">
+                    <img src="https://pix10.agoda.net/geo/city/88777/1_88777_02.jpg?s=1920x822" alt="Pasta" style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;">
+                    <div style="flex-grow: 1; margin-left: 15px;">
+                        <h2>Vijayawada</h2>
+                        <p style="font-weight: bold; color: #3e4eca;">A bustling city on the banks of the Krishna River,</br> known for its temples, trade, and growing infrastructure.</p>
+                    </div>
+                    <button style="background-color: #28a745; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 5px;" onclick="window.location.href='section3.html'">View</button>
+                </div>
+            </div>
+     
+            <div>
+                <p class="section-title">and more....</p>
+            </div>
+       </section>
+
+        <section id="testimonials" class="testimonials">
+            <h2 class="section-title">What Our Users Say</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <img src="https://images.unsplash.com/photo-ee1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128" alt="Pratap" class="testimonial-image">
+                        <div>
+                            <div class="testimonial-name">Pratap</div>
+                            <div class="testimonial-role">Travel Enthusiast</div>
+                        </div>
+                    </div>
+                    <p>This platform has revolutionized how I plan my trips. The blog generator is amazing!</p>
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <img src="https://images.unspleash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128" alt="Vasanth" class="testimonial-image">
+                        <div>
+                            <div class="testimonial-name">Vasanth</div>
+                            <div class="testimonial-role">Travel Blogger</div>
+                        </div>
+                    </div>
+                    <p>The best travel planning tool I've ever used. It saves me hours of work!</p>
+                    <div class="rating">⭐⭐⭐⭐⭐</div>
+                </div>
+            </div>
+        </section>
+    </div>
+     
+    <section id="ContactUs" class="ContactUs">
+    <div id="login-page" class="login-container" style="display: none;">
+        <form class="login-form" onsubmit="handleLogin(event)">
+            <h2 style="text-align: center; margin-bottom: 2rem;">Welcome Back ✈</h2>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="btn">Sign In</button>
+            <button type="button" class="btn" style="margin-top: 1rem; background: gray;" onclick="showHome()">Back to Home</button>
+        </form>
+    </div>
+</section>
+
+    <div style="margin: 0; padding: 2rem; font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc;">
+        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+          <div style="background-color: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 1.5rem; color: #1e293b;">Contact Us</h2>
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                  <strong class="me-auto">TravelMate invites You</strong>
+                  <small>❤</small>
+                  <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                 Want to Contact us, send us a Message.
+                </div>
+              </div>
+            <form id="contactForm">
+              <div style="margin-bottom: 1rem;">
+                <label for="name" style="display: block; margin-bottom: 0.5rem; color: #64748b;">Name</label>
+                <input type="text" id="name" required style="width: 50%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; outline: none;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label for="email" style="display: block; margin-bottom: 0.5rem; color: #64748b;">Email</label>
+                <input type="email" id="email" required style="width: 50%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; outline: none;">
+              </div>
+              <div style="margin-bottom: 1rem;">
+                <label for="message" style="display: block; margin-bottom: 0.5rem; color: #64748b;">Message</label>
+                <textarea id="message" required style="width: 50%; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; outline: none; min-height: 150px; resize: vertical;"></textarea>
+              </div>
+              <button type="submit" style="background-color: #3b82f6; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: background-color 0.2s;">Send Message</button>
+            </form>
+          </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Redirect to the trip planner page (index.html)
+        function redirectToPlanner() {
+            window.location.href = '/index.html';
+        }
+
+        function redirectToBlogger() {
+            window.location.href = '/blog.html';
+        }
+
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // Observe elements
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.section-title, .feature-card, .testimonial-card').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Parallax effect for hero section
+            window.addEventListener('scroll', () => {
+                const hero = document.querySelector('.hero');
+                const scrolled = window.pageYOffset;
+                hero.style.backgroundPositionY = `${scrolled * 0.5}px`;
+            });
+
+            // Navbar background on scroll
+            window.addEventListener('scroll', () => {
+                const nav = document.querySelector('.nav');
+                if (window.scrollY > 50) {
+                    nav.style.background = 'rgba(0, 0, 0, 0.8)';
+                } else {
+                    nav.style.background = 'rgba(0, 0, 0, 0.5)';
+                }
+            });
+        });
+        
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Message sent successfully!');
+            this.reset();
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var toastEl = document.querySelector('.toast');
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        });
+   
+        // Page navigation
+        function showLogin() {
+            document.getElementById('home-page').style.display = 'none';
+            document.getElementById('login-page').style.display = 'flex';
+        }
+
+        function showHome() {
+            document.getElementById('home-page').style.display = 'block';
+            document.getElementById('login-page').style.display = 'none';
+        }
+
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // After login, redirect to the trip planner page
+            window.location.href = '/index.html';
+        }
+    </script>
+</body>
+</html>

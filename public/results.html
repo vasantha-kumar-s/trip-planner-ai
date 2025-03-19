@@ -1,61 +1,201 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Trip Plan | AI Trip Planner</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Same styles as before */
+        :root {
+            /* Light mode variables */
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+            --header-bg: #f8f9fa;
+            --border-color: #eaeaea;
+            --shadow-color: rgba(0, 0, 0, 0.06);
+            --hover-shadow: rgba(0, 0, 0, 0.08);
+            --btn-back-bg: #f3f4f6;
+            --btn-back-color: #4b5563;
+            --btn-back-border: #e5e7eb;
+            --btn-back-hover-bg: #e5e7eb;
+            --btn-back-hover-color: #111827;
+            --list-border: #f3f4f6;
+            --section-border: #f3f4f6;
+            --muted-color: #6c757d;
+        }
+
+        [data-theme="dark"] {
+            /* Dark mode variables */
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --card-bg: #1e1e1e;
+            --header-bg: #1a1a1a;
+            --border-color: #2a2a2a;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --hover-shadow: rgba(0, 0, 0, 0.4);
+            --btn-back-bg: #2a2a2a;
+            --btn-back-color: #e0e0e0;
+            --btn-back-border: #3a3a3a;
+            --btn-back-hover-bg: #3a3a3a;
+            --btn-back-hover-color: #ffffff;
+            --list-border: #2a2a2a;
+            --section-border: #2a2a2a;
+            --muted-color: #9e9e9e;
+        }
+
         body {
-            background-color: #f5f5f5;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
         }
         .header {
-            background-color: #4a89dc;
-            color: white;
-            padding: 20px 0;
-            margin-bottom: 30px;
+            background-color: var(--header-bg);
+            padding: 40px 0 30px;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.3s;
         }
         .card {
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px var(--shadow-color);
+            margin-bottom: 24px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px var(--hover-shadow);
         }
         .day-card {
-            border-left: 5px solid #4a89dc;
+            border-left: 3px solid #3b82f6;
         }
         .category-title {
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
+            padding: 12px 0;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .btn {
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
         .btn-download {
-            background-color: #28a745;
+            background-color: #3b82f6;
             color: white;
             border: none;
         }
         .btn-download:hover {
-            background-color: #218838;
-            color: white;
+            background-color: #2563eb;
+            transform: translateY(-1px);
         }
         .btn-back {
-            background-color: #6c757d;
-            color: white;
-            border: none;
+            background-color: var(--btn-back-bg);
+            color: var(--btn-back-color);
+            border: 1px solid var(--btn-back-border);
+            transition: background-color 0.3s, color 0.3s;
         }
         .btn-back:hover {
-            background-color: #5a6268;
-            color: white;
+            background-color: var(--btn-back-hover-bg);
+            color: var(--btn-back-hover-color);
+        }
+        #map {
+            height: 300px;
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px var(--shadow-color);
+        }
+        .list-group-item {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: none;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--list-border);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+        h1, h2, h3, h4, h5 {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        .summary-item {
+            margin-bottom: 8px;
+            color: var(--text-color);  /* Added this line to ensure summary text follows theme */
+        }
+        .summary-item strong {
+            color: var(--text-color);  /* Added this line to ensure labels follow theme */
+        }
+        .section-title {
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--section-border);
+        }
+        .activity-item, .restaurant-item {
+            margin-bottom: 8px;
+            padding-left: 16px;
+            position: relative;
+            color: var(--text-color);  /* Added this line for activities and restaurants */
+        }
+        .activity-item:before, .restaurant-item:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+        }
+        .text-muted {
+            color: var(--muted-color) !important;
+        }
+        .card-body p {
+            color: var(--text-color);  /* Added this line for paragraph text in cards */
+        }
+        /* Dark mode toggle */
+        #dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        #dark-mode-toggle:hover {
+            background-color: rgba(128, 128, 128, 0.2);
+        }
+        #dark-mode-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: var(--text-color);
+            stroke-width: 2;
+            transition: stroke 0.3s;
         }
     </style>
 </head>
 <body>
-    <div class="header text-center">
+    <!-- Dark Mode Toggle Button -->
+    <button id="dark-mode-toggle" aria-label="Toggle dark mode">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="theme-icon">
+            <!-- Sun icon (visible in dark mode) -->
+            <path class="sun-icon" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+            <!-- Moon icon (visible in light mode) -->
+            <path class="moon-icon" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" style="display:none;" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+    </button>
+
+    <div class="header">
         <div class="container">
-            <h1>Your Trip Plan</h1>
-            <p class="lead">AI-Generated Itinerary for <span id="destination-display"></span></p>
+            <h1 class="text-center mb-2">Your Trip Plan</h1>
+            <p class="text-center text-muted">AI-Generated Itinerary for <span id="destination-display"></span></p>
         </div>
     </div>
 
@@ -63,29 +203,11 @@
         <div class="row mb-4">
             <div class="col-md-12 d-flex justify-content-between">
                 <button class="btn btn-back" onclick="window.location.href='index.html'">
-                    <i class="bi bi-arrow-left"></i> Back to Planner
+                    Back to Planner
                 </button>
                 <button class="btn btn-download" id="downloadBtn">
-                    <i class="bi bi-download"></i> Download as DOCX
+                    Download as PDF
                 </button>
-            </div>
-        </div>
-        
-        <!-- Debug output area -->
-        <div class="row mb-4" id="debugRow">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h4>Debug Information</h4>
-                        <button class="btn btn-sm btn-info mb-2" onclick="toggleDebugDetails()">Toggle Debug Details</button>
-                        <div id="debugDetails" style="display: none;">
-                            <h5>Trip Data from localStorage:</h5>
-                            <pre id="tripDataDebug" style="white-space: pre-wrap; max-height: 200px; overflow-y: auto;"></pre>
-                            <h5>Trip Plan from localStorage:</h5>
-                            <pre id="tripPlanDebug" style="white-space: pre-wrap; max-height: 200px; overflow-y: auto;"></pre>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -93,24 +215,27 @@
             <div class="col-md-12">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <h3>Trip Summary</h3>
+                        <h3 class="mb-3">Trip Summary</h3>
                         <div class="row">
                             <div class="col-md-4">
-                                <p><strong>Destination:</strong> <span id="trip-destination"></span></p>
+                                <p class="summary-item"><strong>Destination:</strong> <span id="trip-destination"></span></p>
                             </div>
                             <div class="col-md-4">
-                                <p><strong>Duration:</strong> <span id="trip-duration"></span> days</p>
+                                <p class="summary-item"><strong>Duration:</strong> <span id="trip-duration"></span> days</p>
                             </div>
                             <div class="col-md-4">
-                                <p><strong>Transport:</strong> <span id="trip-transport"></span></p>
+                                <p class="summary-item"><strong>Transport:</strong> <span id="trip-transport"></span></p>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4">
-                                <p><strong>Budget:</strong> <span id="trip-budget"></span></p>
+                                <p class="summary-item"><strong>Hotel Budget:</strong> ₹<span id="trip-hotel-budget"></span>/night</p>
                             </div>
                             <div class="col-md-4">
-                                <p><strong>People:</strong> <span id="trip-people"></span></p>
+                                <p class="summary-item"><strong>Food Budget:</strong> ₹<span id="trip-food-budget"></span>/meal per person</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="summary-item"><strong>Travelers:</strong> <span id="trip-people"></span></p>
                             </div>
                         </div>
                     </div>
@@ -119,16 +244,17 @@
         </div>
 
         <div class="row">
-            <div class="col-md-8">
-                <h3>Daily Itinerary</h3>
+            <div class="col-lg-8">
+                <h3 class="section-title">Daily Itinerary</h3>
                 <div id="itinerary-container">
                     <!-- Itinerary will be populated here -->
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-lg-4">
+                <div id="map"></div>
                 <div class="card mb-4">
                     <div class="card-body">
-                        <h4>Accommodation Options</h4>
+                        <h4 class="mb-3">Accommodation Options</h4>
                         <div class="category-title">
                             <h5>Budget</h5>
                         </div>
@@ -154,7 +280,7 @@
                 
                 <div class="card">
                     <div class="card-body">
-                        <h4>Local Food to Try</h4>
+                        <h4 class="mb-3">Local Food to Try</h4>
                         <ul id="local-food" class="list-group list-group-flush">
                             <!-- Local food will be populated here -->
                         </ul>
@@ -167,23 +293,74 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.0.0/docx.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKi4uthP2PXNkv3U1TroiO3_RuhnGC9RA&callback=initMap" async defer></script>
     <script>
-        function toggleDebugDetails() {
-            const details = document.getElementById('debugDetails');
-            details.style.display = details.style.display === 'none' ? 'block' : 'none';
-        }
-        
+        // Dark mode toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
-            // Retrieve data from localStorage
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const sunIcon = document.querySelector('.sun-icon');
+            const moonIcon = document.querySelector('.moon-icon');
+            const htmlElement = document.documentElement;
+            
+            // Check for saved theme preference or respect OS preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                htmlElement.setAttribute('data-theme', savedTheme);
+                updateThemeIcon(savedTheme);
+            } else {
+                // Use system preference
+                const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const theme = prefersDarkMode ? 'dark' : 'light';
+                htmlElement.setAttribute('data-theme', theme);
+                updateThemeIcon(theme);
+            }
+            
+            darkModeToggle.addEventListener('click', function() {
+                const currentTheme = htmlElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                htmlElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+            });
+            
+            function updateThemeIcon(theme) {
+                if (theme === 'dark') {
+                    sunIcon.style.display = 'block';
+                    moonIcon.style.display = 'none';
+                } else {
+                    sunIcon.style.display = 'none';
+                    moonIcon.style.display = 'block';
+                }
+            }
+        });
+
+        function initMap() {
+            const tripData = JSON.parse(localStorage.getItem('tripData'));
+            if (!tripData) return;
+
+            const map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 0, lng: 0 }, // Default center
+                zoom: 8
+            });
+
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ address: tripData.destination }, (results, status) => {
+                if (status === 'OK') {
+                    map.setCenter(results[0].geometry.location);
+                    new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location
+                    });
+                } else {
+                    console.error('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
             const tripData = JSON.parse(localStorage.getItem('tripData'));
             const tripPlan = JSON.parse(localStorage.getItem('tripPlan'));
-            
-            // Fill debug information
-            document.getElementById('tripDataDebug').textContent = JSON.stringify(tripData, null, 2);
-            document.getElementById('tripPlanDebug').textContent = JSON.stringify(tripPlan, null, 2);
-            
-            console.log('Trip Data:', tripData);
-            console.log('Trip Plan:', tripPlan);
             
             if (!tripData || !tripPlan) {
                 alert('No trip data found. Please create a new trip plan.');
@@ -192,40 +369,48 @@
             }
             
             try {
-                // Populate trip summary
                 document.getElementById('destination-display').textContent = tripData.destination;
                 document.getElementById('trip-destination').textContent = tripData.destination;
                 document.getElementById('trip-duration').textContent = tripData.duration;
                 document.getElementById('trip-transport').textContent = tripData.transport;
-                document.getElementById('trip-budget').textContent = tripData.budget;
+                document.getElementById('trip-hotel-budget').textContent = tripData.hotelBudget;
+                document.getElementById('trip-food-budget').textContent = tripData.foodBudget;
                 document.getElementById('trip-people').textContent = tripData.people;
                 
-                // Populate itinerary
                 const itineraryContainer = document.getElementById('itinerary-container');
                 
                 tripPlan.schedule.forEach((day, index) => {
                     const dayCard = document.createElement('div');
                     dayCard.className = 'card day-card mb-3';
                     
+                    let activitiesHTML = '';
+                    day.activities.forEach(activity => {
+                        activitiesHTML += `<div class="activity-item">${activity}</div>`;
+                    });
+                    
+                    let restaurantsHTML = '';
+                    day.restaurants.forEach(restaurant => {
+                        restaurantsHTML += `<div class="restaurant-item">${restaurant}</div>`;
+                    });
+                    
                     dayCard.innerHTML = `
                         <div class="card-body">
-                            <h4>Day ${index + 1}</h4>
-                            <p>${day.description}</p>
-                            <h5>Activities:</h5>
-                            <ul>
-                                ${day.activities.map(activity => `<li>${activity}</li>`).join('')}
-                            </ul>
-                            <h5>Restaurants:</h5>
-                            <ul>
-                                ${day.restaurants.map(restaurant => `<li>${restaurant}</li>`).join('')}
-                            </ul>
+                            <h4 class="mb-3">Day ${index + 1}</h4>
+                            <p class="mb-3">${day.description}</p>
+                            <h5 class="mb-2">Activities</h5>
+                            <div class="mb-3">
+                                ${activitiesHTML}
+                            </div>
+                            <h5 class="mb-2">Restaurants</h5>
+                            <div>
+                                ${restaurantsHTML}
+                            </div>
                         </div>
                     `;
                     
                     itineraryContainer.appendChild(dayCard);
                 });
                 
-                // Populate hotels
                 const cheapHotels = document.getElementById('cheap-hotels');
                 tripPlan.hotels.cheap.forEach(hotel => {
                     const li = document.createElement('li');
@@ -250,7 +435,6 @@
                     expensiveHotels.appendChild(li);
                 });
                 
-                // Populate local food
                 const localFood = document.getElementById('local-food');
                 tripPlan.localFood.forEach(food => {
                     const li = document.createElement('li');
@@ -259,7 +443,6 @@
                     localFood.appendChild(li);
                 });
                 
-                // Download as DOCX functionality
                 document.getElementById('downloadBtn').addEventListener('click', function() {
                     generateDocx(tripData, tripPlan);
                 });
@@ -270,7 +453,6 @@
         });
         
         function generateDocx(tripData, tripPlan) {
-            // Create a new document
             const doc = new docx.Document({
                 sections: [{
                     properties: {},
@@ -310,14 +492,21 @@
                         
                         new docx.Paragraph({
                             children: [
-                                new docx.TextRun({ text: "Budget: ", bold: true }),
-                                new docx.TextRun({ text: tripData.budget })
+                                new docx.TextRun({ text: "Hotel Budget: ", bold: true }),
+                                new docx.TextRun({ text: `₹${tripData.hotelBudget} per night` })
                             ]
                         }),
                         
                         new docx.Paragraph({
                             children: [
-                                new docx.TextRun({ text: "People: ", bold: true }),
+                                new docx.TextRun({ text: "Food Budget: ", bold: true }),
+                                new docx.TextRun({ text: `₹${tripData.foodBudget} per meal per person` })
+                            ]
+                        }),
+                        
+                        new docx.Paragraph({
+                            children: [
+                                new docx.TextRun({ text: "Travelers: ", bold: true }),
                                 new docx.TextRun({ text: tripData.people })
                             ],
                             spacing: { after: 200 }
@@ -329,7 +518,6 @@
                             spacing: { before: 200, after: 200 }
                         }),
                         
-                        // Add daily itinerary
                         ...getItineraryParagraphs(tripPlan.schedule),
                         
                         new docx.Paragraph({
@@ -373,7 +561,6 @@
                 }]
             });
             
-            // Generate and download the document
             docx.Packer.toBlob(doc).then(blob => {
                 saveAs(blob, `${tripData.destination} Trip Plan.docx`);
             });
@@ -402,7 +589,6 @@
                     }),
                 );
                 
-                // Add activities as bullet points
                 day.activities.forEach(activity => {
                     paragraphs.push(
                         new docx.Paragraph({
@@ -422,7 +608,6 @@
                     }),
                 );
                 
-                // Add restaurants as bullet points
                 day.restaurants.forEach(restaurant => {
                     paragraphs.push(
                         new docx.Paragraph({
@@ -449,5 +634,51 @@
             );
         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        document.getElementById('downloadBtn').addEventListener('click', async function () {
+            const { jsPDF } = window.jspdf;
+    
+            // Scroll to the top to ensure full capture
+            window.scrollTo(0, 0);
+            
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const element = document.body;
+            
+            // Capture the full height of the webpage
+            const canvas = await html2canvas(element, {
+                scale: 2, // Higher quality
+                useCORS: true,
+                scrollX: 0,
+                scrollY: 0,
+                windowWidth: document.documentElement.scrollWidth,
+                windowHeight: document.documentElement.scrollHeight
+            });
+    
+            const imgData = canvas.toDataURL('image/png');
+            const imgWidth = 210; // A4 width in mm
+            const pageHeight = 297; // A4 height in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    
+            let heightLeft = imgHeight;
+            let position = 0;
+    
+            // Add pages if content exceeds one A4 page
+            while (heightLeft > 0) {
+                doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+                position -= pageHeight;
+    
+                if (heightLeft > 0) {
+                    doc.addPage();
+                }
+            }
+    
+            doc.save('Trip_Plan.pdf');
+        });
+    </script>
+    
 </body>
 </html>
